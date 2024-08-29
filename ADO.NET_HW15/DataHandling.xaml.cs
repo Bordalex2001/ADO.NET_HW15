@@ -32,18 +32,18 @@ namespace ADO.NET_HW15
         {
             try
             {
-                //DataTable ids = await dbProvider.GetIdsAsync();
                 using (FruitsAndVegetablesDbContext db = new())
                 {
                     var ids = db.List.FromSqlRaw("Select Id from List")
-                        .Select(id => id.ToString())
-                        .ToList();
+                        .Select(id => new
+                        {
+                            id.Id
+                        }).ToList();
                     idComboBox.ItemsSource = ids;
                     idComboBox.DisplayMemberPath = "Id";
                     idComboBox.SelectedValuePath = "Id";
                     idComboBox.SelectedIndex = 0;
 
-                    //DataTable types = await dbProvider.GetTypesAsync();
                     var types = db.List.FromSqlRaw("Select distinct Type from List")
                         .Select(t => new
                         {
@@ -70,7 +70,7 @@ namespace ADO.NET_HW15
                 {
                     SqlParameter param = new("@id", id);
                     
-                    var valuesById = db.List.FromSqlRaw("Select * from List where Id = @id", id).ToList();
+                    var valuesById = db.List.FromSqlRaw("Select * from List where Id = @id", param).ToList();
                     if (valuesById.Count > 0)
                     {
                         var item = valuesById.FirstOrDefault();
